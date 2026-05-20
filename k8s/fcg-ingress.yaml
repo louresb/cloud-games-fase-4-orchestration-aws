@@ -1,0 +1,52 @@
+# Top-level Ingress fronting all five services.
+# - Local (kind/minikube + nginx-ingress): use ingressClassName=nginx.
+# - AWS EKS: install AWS Load Balancer Controller and change to ingressClassName=alb +
+#   uncomment the alb.* annotations. Then `kubectl apply -f` provisions an ALB.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fcg-ingress
+  namespace: fcg-apps
+  labels:
+    app: fcg-ingress
+    part-of: fiap-cloud-games
+  annotations:
+    # ---- AWS Load Balancer Controller (uncomment for EKS) ----
+    # kubernetes.io/ingress.class: alb
+    # alb.ingress.kubernetes.io/scheme: internet-facing
+    # alb.ingress.kubernetes.io/target-type: ip
+    # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    # alb.ingress.kubernetes.io/ssl-redirect: '443'
+    # alb.ingress.kubernetes.io/healthcheck-path: /health/ready
+    # ---- nginx-ingress (local) ----
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: fcg.local
+      http:
+        paths:
+          - path: /users(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: users-svc
+                port: { number: 80 }
+          - path: /catalog(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: catalog-svc
+                port: { number: 80 }
+          - path: /payments(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: payments-svc
+                port: { number: 80 }
+          - path: /audit(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: audit-svc
+                port: { number: 80 }

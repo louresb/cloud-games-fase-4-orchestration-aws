@@ -1,0 +1,72 @@
+name: cloud-games
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver_dev
+    user: root
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SQL_PASSWORD}
+      - MSSQL_PID=Express
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQL_PASSWORD}", "-C", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - sql_data:/var/opt/mssql/data
+    networks:
+      - games-net
+      
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq_dev
+    ports:
+      - "5672:5672"   # Porta do protocolo AMQP
+      - "15672:15672" # Porta da UI de gerenciamento (http://localhost:15672)
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    networks:
+      - games-net
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki_dev
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - games-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_dev
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    depends_on:
+      - loki
+    networks:
+      - games-net
+
+volumes:
+  sql_data:
+  rabbit_data:
+
+networks:
+  games-net:
+    name: cloud-games-network
+    driver: bridge

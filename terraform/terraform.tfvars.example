@@ -1,0 +1,35 @@
+﻿# Example input values for local development.
+# Copy to terraform.tfvars locally and replace values. Do not commit terraform.tfvars.
+
+project_name = "cloud-games"
+environment  = "dev"
+aws_region   = "us-east-1"
+
+ecr_users_repository_name         = "cloud-games-users-svc"
+ecr_payments_repository_name      = "cloud-games-payments-svc"
+ecr_notifications_repository_name = "cloud-games-notifications-svc"
+ecr_catalog_repository_name       = "cloud-games-catalog-svc"
+ecr_audit_repository_name         = "cloud-games-audit-svc"
+
+main_sqs_queue_name        = "payment-notification-flow"
+main_sqs_queue_name_prefix = "cloud-games"
+
+# Optional legacy ECS Notifications image. Empty means use ECR notifications repo :latest.
+notifications_image_uri          = ""
+notifications_service_name       = "notifications"
+notifications_task_cpu           = 256
+notifications_task_memory        = 512
+notifications_desired_count      = 1
+notifications_log_retention_days = 7
+ecs_lab_role_arn                 = ""
+
+# Required sensitive values. Replace locally or pass via CI/CD variables.
+opensearch_master_username = "admin"
+opensearch_master_password = "OpenSearch123!"
+jwt_secret                 = "set-a-strong-32-char-jwt-secret-here"
+sql_connection_string      = "set-sql-connection-string-here"
+rabbitmq_username          = "fcg"
+rabbitmq_password          = "set-rabbitmq-password-here"
+payment_webhook_api_key     = "set-payment-webhook-api-key-here"
+admin_user_password         = "Admin123!ChangeMe"
+

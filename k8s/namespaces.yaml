@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fcg-apps
+  labels:
+    purpose: applications
+    part-of: fiap-cloud-games
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fcg-infra
+  labels:
+    purpose: infrastructure
+    part-of: fiap-cloud-games
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fcg-monitoring
+  labels:
+    purpose: monitoring
+    part-of: fiap-cloud-games

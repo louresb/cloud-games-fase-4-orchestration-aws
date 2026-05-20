@@ -1,0 +1,37 @@
+name: cloud-games
+services:
+  notifications-svc:
+    build:
+      context: ../cloud-games-fase-4-notifications
+      dockerfile: Dockerfile
+    container_name: notifications_svc_dev
+    ports:
+      - "5999:8080" # Mapeia porta 5999 do host para 8080 do container
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+      # -- RabbitMQ ---
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__UserName=${RABBIT_USER}
+      - RabbitMq__Password=${RABBIT_PASS}
+
+      # -- Queues ---
+      - Queues__Users__Commands=${QUEUE_USERS_CMD}
+      - Queues__Users__Events=${QUEUE_USERS_EVT}
+      - Queues__Catalog__Commands=${QUEUE_CATALOG_CMD}
+      - Queues__Catalog__Events=${QUEUE_CATALOG_EVT}
+      - Queues__Payments__Commands=${QUEUE_PAYMENTS_CMD}
+      - Queues__Payments__Events=${QUEUE_PAYMENTS_EVT}
+      - Queues__Notifications__Commands=${QUEUE_NOTIFICATIONS_CMD}
+      - Queues__Notifications__Events=${QUEUE_NOTIFICATIONS_EVT}
+
+      # --- Loki ---
+      - Loki__Url=http://loki:3100
+    restart: on-failure
+    networks:
+      - games-net
+
+networks:
+  games-net:
+    external: true
+    name: cloud-games-network
