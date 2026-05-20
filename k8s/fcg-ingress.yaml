@@ -1,4 +1,4 @@
-# Top-level Ingress fronting all five services.
+﻿# Top-level Ingress fronting all five services.
 # - Local (kind/minikube + nginx-ingress): use ingressClassName=nginx.
 # - AWS EKS: install AWS Load Balancer Controller and change to ingressClassName=alb +
 #   uncomment the alb.* annotations. Then `kubectl apply -f` provisions an ALB.
@@ -30,19 +30,19 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: users-svc
+                name: users-service
                 port: { number: 80 }
           - path: /catalog(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
-                name: catalog-svc
+                name: catalog-service
                 port: { number: 80 }
           - path: /payments(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
-                name: payments-svc
+                name: payments-service
                 port: { number: 80 }
           - path: /audit(/|$)(.*)
             pathType: ImplementationSpecific
@@ -50,3 +50,4 @@ spec:
               service:
                 name: audit-svc
                 port: { number: 80 }
+
