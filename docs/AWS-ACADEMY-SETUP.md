@@ -60,6 +60,27 @@ Importante: no AWS Academy os secrets expiram e precisam ser atualizados a cada 
 
 Para uma conta AWS normal, configure `AWS_DEPLOY_ROLE_ARN`. Os workflows preferem OIDC quando essa secret existe; se estiver vazia, usam as credenciais temporarias do AWS Academy.
 
+## 2.1. Configurar Secrets via script seguro
+
+Nao commite as credenciais do AWS Academy. Elas devem ficar apenas como secrets do GitHub ou variaveis de ambiente locais.
+
+No PowerShell, cole os valores do Learner Lab como variaveis de ambiente:
+
+```powershell
+$env:AWS_ACCESS_KEY_ID="COLE_O_ACCESS_KEY_ID"
+$env:AWS_SECRET_ACCESS_KEY="COLE_O_SECRET_ACCESS_KEY"
+$env:AWS_SESSION_TOKEN="COLE_O_SESSION_TOKEN"
+$env:AWS_REGION="us-east-1"
+```
+
+Depois, com GitHub CLI autenticado (`gh auth login`), rode:
+
+```powershell
+cd C:\Users\bruno\dev\cloud-games-fase-4-orchestration-aws
+.\scripts\configure-github-academy-secrets.ps1 -Owner louresb
+```
+
+O script configura os secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` e as variables `AWS_REGION`, `EKS_CLUSTER`, `K8S_NAMESPACE` nos repos de servico.
 ## 3. Criar os repositorios ECR manualmente
 
 Se voce nao for aplicar Terraform, crie os repositorios ECR manualmente:
@@ -184,3 +205,4 @@ Depois de subir cada pasta para seu GitHub:
 - Para cumprir a Fase 4, foram entregues Kubernetes, CI/CD, ECR, Redis, OpenSearch, NoSQL Audit, Ingress, Secrets externos, rolling update e observabilidade.
 - Multi-tenant esta preparado com tenants oficiais `FIAP`, `Alura` e `PM3`, carregando `TenantId` em JWT, eventos, audit e logs.
 - A solucao evita hardcode de segredo; local/demo usa secrets Kubernetes gerados por script e AWS usa Secrets Manager/External Secrets.
+
