@@ -53,12 +53,14 @@ Secrets obrigatorios para AWS Academy:
 Variables recomendadas:
 
 - `AWS_REGION` = `us-east-1`
+- `AWS_ACCOUNT_ID` = sua conta AWS Academy
 - `EKS_CLUSTER` = `cloud-games-dev-eks`
 - `K8S_NAMESPACE` = `fcg-apps`
+- `ENABLE_EKS_DEPLOY` = `false`
 
 Importante: no AWS Academy os secrets expiram e precisam ser atualizados a cada novo lab.
 
-Para uma conta AWS normal, configure `AWS_DEPLOY_ROLE_ARN`. Os workflows preferem OIDC quando essa secret existe; se estiver vazia, usam as credenciais temporarias do AWS Academy.
+No AWS Academy, mantenha `ENABLE_EKS_DEPLOY=false`. O deploy EKS fica preparado para uma conta com permissoes completas, mas nao deve ser exigido no Learner Lab.
 
 ## 2.1. Configurar Secrets via script seguro
 
@@ -71,6 +73,8 @@ $env:AWS_ACCESS_KEY_ID="COLE_O_ACCESS_KEY_ID"
 $env:AWS_SECRET_ACCESS_KEY="COLE_O_SECRET_ACCESS_KEY"
 $env:AWS_SESSION_TOKEN="COLE_O_SESSION_TOKEN"
 $env:AWS_REGION="us-east-1"
+$env:AWS_ACCOUNT_ID=(aws sts get-caller-identity --query Account --output text)
+$env:ENABLE_EKS_DEPLOY="false"
 ```
 
 Depois, com GitHub CLI autenticado (`gh auth login`), rode:
@@ -80,7 +84,8 @@ cd C:\Users\bruno\dev\cloud-games-fase-4-orchestration-aws
 .\scripts\configure-github-academy-secrets.ps1 -Owner louresb
 ```
 
-O script configura os secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` e as variables `AWS_REGION`, `EKS_CLUSTER`, `K8S_NAMESPACE` nos repos de servico.
+O script configura os secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN` e as variables `AWS_REGION`, `AWS_ACCOUNT_ID`, `EKS_CLUSTER`, `K8S_NAMESPACE`, `ENABLE_EKS_DEPLOY` nos repos de servico.
+
 ## 3. Criar os repositorios ECR manualmente
 
 Se voce nao for aplicar Terraform, crie os repositorios ECR manualmente:

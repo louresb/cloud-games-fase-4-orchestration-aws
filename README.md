@@ -124,7 +124,7 @@ Pipeline de deploy:
 
 1. `dotnet restore/build/test`
 2. `docker build`
-3. login AWS OIDC
+3. login AWS com credenciais temporarias do AWS Academy
 4. push para Amazon ECR
 5. `aws eks update-kubeconfig`
 6. `kubectl apply`
