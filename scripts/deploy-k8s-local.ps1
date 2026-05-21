@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
 $root = "C:\Users\bruno\dev"
 $orch = Join-Path $root "cloud-games-fase-4-orchestration-aws"
@@ -32,6 +32,10 @@ Apply-Secret "fcg-infra" "mssql-secret" @(
   "--from-literal=MSSQL_SA_PASSWORD=$SqlPassword"
 )
 
+Apply-Secret "fcg-infra" "grafana-secret" @(
+  "--from-literal=GF_SECURITY_ADMIN_USER=admin",
+  "--from-literal=GF_SECURITY_ADMIN_PASSWORD=admin"
+)
 Apply-Secret "fcg-apps" "users-secret" @(
   "--from-literal=ConnectionStrings__DefaultConnection=Server=sqlserver-service.fcg-infra.svc.cluster.local,1433;Database=UsersDb;User Id=sa;Password=$SqlPassword;TrustServerCertificate=True;Encrypt=False;",
   "--from-literal=RabbitMq__UserName=$RabbitUser",
@@ -92,5 +96,14 @@ foreach ($svc in @("users", "catalog", "payments", "notifications", "audit")) {
   kubectl apply -f $dir
 }
 
+# Local Docker Desktop: keep SQL-backed APIs at one replica while EF Core applies startup migrations.
+# The HPA is still present for the architecture/demo, but this prevents concurrent local migrations.
+$localHpaPatch = '{\"spec\":{\"minReplicas\":1}}'
+foreach ($hpa in @("users-api", "catalog-api", "payments-api")) {
+  kubectl -n fcg-apps patch hpa $hpa --type merge -p $localHpaPatch
+}
+
+kubectl -n fcg-apps scale deployment/users-deployment deployment/catalog-deployment deployment/payments-deployment --replicas=1
 kubectl apply -f (Join-Path $orch "k8s\fcg-ingress.yaml")
 kubectl -n fcg-apps get pods,svc,hpa,ingress
+

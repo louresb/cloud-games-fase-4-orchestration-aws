@@ -486,3 +486,5 @@ $RECYCLE.BIN/
 # Ignore real k8s secrets
 /k8s/*-secret.yaml
 /k8s/*-secrets.yaml
+scripts/.local-port-forwards.pids
+scripts/.port-forward-logs/
