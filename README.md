@@ -1,4 +1,4 @@
-﻿# FIAP Cloud Games - Fase 4 AWS
+# FIAP Cloud Games - Fase 4 AWS
 
 Este repositorio centraliza a entrega AWS-first da Fase 4 do FIAP Cloud Games.
 
@@ -8,7 +8,7 @@ A prioridade desta versao e demonstrar uma solucao funcional, coerente e defensa
 
 ```mermaid
 flowchart TB
-    Client["Client / Video demo"] --> Ingress["ALB Ingress / NGINX Ingress"]
+    Client["Client"] --> Ingress["ALB Ingress / NGINX Ingress"]
 
     subgraph EKS["Amazon EKS - namespace fcg-apps"]
         Users["Users API (.NET 10)"]
@@ -130,7 +130,7 @@ Pipeline de deploy:
 6. `kubectl apply`
 7. `kubectl rollout status`
 
-## Execucao local para demo
+## Execucao local
 
 Dependencias locais:
 
@@ -153,14 +153,4 @@ Deploy em cluster Kubernetes ja configurado:
 .\scripts\deploy-k8s-local.ps1
 kubectl -n fcg-apps get pods,svc,hpa,ingress
 ```
-
-## Evidencias para a banca
-
-- Checklist detalhado: [PDF-COMPLIANCE.md](PDF-COMPLIANCE.md)
-- Roteiro de video: [DEMO.md](DEMO.md)
-- Terraform: [terraform/](terraform/)
-- Manifests K8s: [k8s/](k8s/)
-## AWS Academy
-
-Para executar com Learner Lab, credenciais temporarias e GitHub Actions, veja [docs/AWS-ACADEMY-SETUP.md](docs/AWS-ACADEMY-SETUP.md).
 

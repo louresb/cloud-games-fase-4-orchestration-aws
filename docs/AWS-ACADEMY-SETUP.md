@@ -1,15 +1,15 @@
-﻿# AWS Academy Setup - FIAP Cloud Games Fase 4
+# AWS Academy Setup - FIAP Cloud Games Fase 4
 
-Este guia e o caminho pragmatico para demonstrar a Fase 4 usando AWS Academy Learner Lab. A arquitetura entregue continua AWS-first/EKS-first, mas o Academy tem restricoes importantes: as credenciais expiram, o `AWS_SESSION_TOKEN` muda a cada lab e algumas permissoes de IAM/EKS/OpenSearch/ElastiCache podem estar bloqueadas.
+Este guia descreve a configuracao da Fase 4 usando AWS Academy Learner Lab. A arquitetura entregue continua AWS-first/EKS-first, mas o Academy tem restricoes importantes: as credenciais expiram, o `AWS_SESSION_TOKEN` muda a cada lab e algumas permissoes de IAM/EKS/OpenSearch/ElastiCache podem estar bloqueadas.
 
-## Decisao recomendada para demo
+## Estrategia recomendada
 
 Use dois trilhos:
 
-1. **Demo garantida local/Kubernetes**: subir os manifests em Kind, Minikube ou Docker Desktop Kubernetes usando Redis, OpenSearch e DynamoDB Local dos manifests compartilhados.
-2. **Evidencia AWS**: usar AWS Academy para ECR, DynamoDB e, se o lab permitir, EKS/OpenSearch/ElastiCache via Terraform.
+1. **Validacao local/Kubernetes**: subir os manifests em Kind, Minikube ou Docker Desktop Kubernetes usando Redis, OpenSearch e DynamoDB Local dos manifests compartilhados.
+2. **Validacao AWS**: usar AWS Academy para ECR, DynamoDB e, se o lab permitir, EKS/OpenSearch/ElastiCache via Terraform.
 
-Se o EKS ou Terraform falhar por `AccessDenied`, isso e uma restricao esperada do Academy. A entrega ainda fica defensavel porque os manifests, pipelines, Dockerfiles, NoSQL, Redis, OpenSearch e arquitetura cloud-native estao prontos.
+Se o EKS ou Terraform falhar por `AccessDenied`, isso e uma restricao esperada do Academy. O ambiente continua executavel porque os manifests, pipelines, Dockerfiles, NoSQL, Redis, OpenSearch e arquitetura cloud-native estao prontos.
 
 ## 1. Iniciar o AWS Academy Lab
 
@@ -131,7 +131,7 @@ aws eks update-kubeconfig --region $env:AWS_REGION --name cloud-games-dev-eks
 kubectl get nodes
 ```
 
-Para demo local, prefira o script pronto. Ele cria namespaces, secrets locais, RabbitMQ, SQL Server, Redis, OpenSearch, DynamoDB Local, Loki/Grafana e aplica os servicos:
+Para execucao local, prefira o script pronto. Ele cria namespaces, secrets locais, RabbitMQ, SQL Server, Redis, OpenSearch, DynamoDB Local, Loki/Grafana e aplica os servicos:
 
 ```powershell
 cd C:\Users\bruno\dev\cloud-games-fase-4-orchestration-aws
@@ -163,7 +163,7 @@ Para EKS real com Secrets Manager:
 kubectl apply -f k8s\external-secrets-operator.yaml
 ```
 
-Para demo rapida sem Secrets Manager, crie Secrets Kubernetes manualmente. Ajuste valores conforme seu ambiente:
+Para execucao rapida sem Secrets Manager, crie Secrets Kubernetes manualmente. Ajuste valores conforme seu ambiente:
 
 ```powershell
 kubectl -n fcg-apps create secret generic users-secret --from-literal=ConnectionStrings__DefaultConnection="Server=sqlserver-service.fcg-infra.svc.cluster.local,1433;Database=UsersDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Encrypt=False;" --from-literal=Jwt__Secret="dev-only-change-me-32-characters-min" --from-literal=RabbitMq__UserName="guest" --from-literal=RabbitMq__Password="guest" --from-literal=AdminUser__Name="Administrador" --from-literal=AdminUser__Email="adm@fcg.com" --from-literal=AdminUser__Password="Admin123!" --from-literal=AdminUser__Role="Administrator" --from-literal=AdminUser__Status="Active" --from-literal=AdminUser__EmailConfirmed="true" --dry-run=client -o yaml | kubectl apply -f -
@@ -186,7 +186,7 @@ Depois de subir cada pasta para seu GitHub:
 3. Execute o workflow manualmente em **Actions > Build, Push & Deploy > Run workflow**.
 4. Se o deploy falhar por EKS inexistente, o build/test e push ECR ainda validam CI/CD e registry privado.
 
-## 7. Checklist de demo
+## 7. Checklist de validacao
 
 - `dotnet test` passando nos cinco servicos.
 - Dockerfile presente nos cinco servicos.
@@ -198,11 +198,4 @@ Depois de subir cada pasta para seu GitHub:
 - Ingress ou LoadBalancer aplicado.
 - Eventos contendo `TenantId` e `CorrelationId`.
 - Logs estruturados com Serilog/CorrelationId/TenantId.
-
-## 8. Pontos para explicar na banca
-
-- O projeto esta pronto para EKS e cloud-native, mas AWS Academy pode limitar provisionamento de IAM/EKS gerenciado.
-- Para cumprir a Fase 4, foram entregues Kubernetes, CI/CD, ECR, Redis, OpenSearch, NoSQL Audit, Ingress, Secrets externos, rolling update e observabilidade.
-- Multi-tenant esta preparado com tenants oficiais `FIAP`, `Alura` e `PM3`, carregando `TenantId` em JWT, eventos, audit e logs.
-- A solucao evita hardcode de segredo; local/demo usa secrets Kubernetes gerados por script e AWS usa Secrets Manager/External Secrets.
 
