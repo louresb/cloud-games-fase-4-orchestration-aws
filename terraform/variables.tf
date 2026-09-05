@@ -1,4 +1,4 @@
-﻿variable "project_name" {
+variable "project_name" {
   type        = string
   description = "Project identifier used as a naming prefix."
   default     = "cloud-games"
