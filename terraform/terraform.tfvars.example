@@ -14,7 +14,7 @@ ecr_audit_repository_name         = "cloud-games-audit-svc"
 main_sqs_queue_name        = "payment-notification-flow"
 main_sqs_queue_name_prefix = "cloud-games"
 
-# Optional legacy ECS Notifications image. Empty means use ECR notifications repo :latest.
+# Optional ECS Notifications image. Empty means use ECR notifications repo :latest.
 notifications_image_uri          = ""
 notifications_service_name       = "notifications"
 notifications_task_cpu           = 256

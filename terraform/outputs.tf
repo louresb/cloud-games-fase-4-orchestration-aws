@@ -60,9 +60,9 @@ output "irsa_service_role_arns" {
   value       = { for k, role in aws_iam_role.common : k => role.arn }
 }
 
-# Legacy ECS
+# Optional ECS runtime
 output "ecs_cluster_name" {
-  description = "Legacy ECS cluster (Phase 3)."
+  description = "Optional ECS cluster for the Notifications worker."
   value       = aws_ecs_cluster.main.name
 }
 

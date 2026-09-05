@@ -43,7 +43,7 @@ variable "ecr_audit_repository_name" {
   default = "cloud-games-audit-svc"
 }
 
-# ---------- SQS (Phase 3 carry-over) ----------
+# ---------- Optional SQS runtime ----------
 
 variable "main_sqs_queue_name" {
   type    = string
@@ -55,7 +55,7 @@ variable "main_sqs_queue_name_prefix" {
   default = "cloud-games"
 }
 
-# ---------- ECS Notifications (legacy Phase 3) ----------
+# ---------- Optional ECS Notifications runtime ----------
 
 variable "notifications_image_uri" {
   type    = string
@@ -89,7 +89,7 @@ variable "notifications_log_retention_days" {
 
 variable "ecs_lab_role_arn" {
   type        = string
-  description = "Optional IAM role ARN used by legacy ECS tasks. Leave empty to omit this legacy resource role field."
+  description = "Optional IAM role ARN used by ECS tasks. Leave empty to omit this role field."
   default     = ""
 }
 

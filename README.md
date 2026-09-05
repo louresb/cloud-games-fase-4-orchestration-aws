@@ -1,8 +1,6 @@
 # FIAP Cloud Games - Fase 4 AWS
 
-Este repositorio centraliza a entrega AWS-first da Fase 4 do FIAP Cloud Games.
-
-A prioridade desta versao e demonstrar uma solucao funcional, coerente e defensavel tecnicamente dentro do prazo: Kubernetes gerenciado, CI/CD, Redis, OpenSearch, NoSQL, registry privado, Ingress, secrets externos, rolling update, observabilidade e arquitetura cloud-native.
+Este repositorio centraliza a infraestrutura e a orquestracao da Fase 4 do FIAP Cloud Games: Kubernetes gerenciado, CI/CD, Redis, OpenSearch, NoSQL, registry privado, Ingress, secrets externos, rolling update e observabilidade.
 
 ## Arquitetura alvo
 
@@ -26,7 +24,7 @@ flowchart TB
         Secrets["AWS Secrets Manager"]
     end
 
-    Broker["RabbitMQ local / SNS+SQS-ready event bus"]
+    Broker["RabbitMQ event bus"]
     Logs["Serilog + Loki/Grafana + CloudWatch-ready"]
 
     Ingress --> Users
@@ -53,14 +51,11 @@ flowchart TB
 
 ## Repositorios Fase 4
 
-- `C:\Users\bruno\dev\cloud-games-fase-4-users`
-- `C:\Users\bruno\dev\cloud-games-fase-4-catalog`
-- `C:\Users\bruno\dev\cloud-games-fase-4-payments`
-- `C:\Users\bruno\dev\cloud-games-fase-4-notifications`
-- `C:\Users\bruno\dev\cloud-games-fase-4-audit`
-- `C:\Users\bruno\dev\cloud-games-fase-4-orchestration-aws`
-
-Os repositorios da Fase 3 foram usados somente como base. A entrega Fase 4 esta em pastas novas.
+- [Users](https://github.com/louresb/cloud-games-fase-4-users)
+- [Catalog](https://github.com/louresb/cloud-games-fase-4-catalog)
+- [Payments](https://github.com/louresb/cloud-games-fase-4-payments)
+- [Notifications](https://github.com/louresb/cloud-games-fase-4-notifications)
+- [Audit](https://github.com/louresb/cloud-games-fase-4-audit)
 
 ## Servicos
 
@@ -70,7 +65,7 @@ Os repositorios da Fase 3 foram usados somente como base. A entrega Fase 4 esta 
 | Catalog | Implementado | Redis cache-aside, OpenSearch fuzzy search/read model, TenantId em Game, K8s/HPA/CI-CD |
 | Payments | Implementado | Gateway mock, eventos com headers `TenantId`/`CorrelationId`, K8s/HPA/CI-CD |
 | Notifications | Implementado | Worker event-driven, filtro MassTransit para TenantId em logs, K8s/HPA/CI-CD |
-| Audit | Novo | Consome eventos, persiste em DynamoDB, endpoint de consulta por tenant/correlacao, K8s/HPA/CI-CD |
+| Audit | Implementado | Consome eventos, persiste em DynamoDB, endpoint de consulta por tenant/correlacao, K8s/HPA/CI-CD |
 | Orchestration | Implementado | Terraform EKS/ECR/Redis/OpenSearch/DynamoDB/Secrets, Ingress, infra local e scripts |
 
 ## Multi-tenant ready
@@ -96,7 +91,7 @@ Terraform em `terraform/` provisiona:
 - DynamoDB para audit trail.
 - AWS Secrets Manager.
 - IAM/IRSA para acesso sem credenciais em pod.
-- Recurso ECS legado opcional para Notifications, mantido apenas como compatibilidade da fase anterior.
+- Recurso ECS opcional para Notifications, desativado por padrao.
 
 Valores sensiveis nao ficam hardcoded. Use `terraform.tfvars` local ou secret manager/CI secrets.
 
@@ -124,7 +119,7 @@ Pipeline de deploy:
 
 1. `dotnet restore/build/test`
 2. `docker build`
-3. login AWS com credenciais temporarias do AWS Academy
+3. autenticacao na AWS com credenciais configuradas no GitHub
 4. push para Amazon ECR
 5. `aws eks update-kubeconfig`
 6. `kubectl apply`
@@ -135,7 +130,7 @@ Pipeline de deploy:
 Dependencias locais:
 
 ```powershell
-cd C:\Users\bruno\dev\cloud-games-fase-4-orchestration-aws
+cd cloud-games-fase-4-orchestration-aws
 copy .env.example .env
 # ajuste SQL_PASSWORD, JWT_SECRET, PAYMENT_WEBHOOK_API_KEY se necessario
 docker compose -f docker-compose.fase4.yaml up -d

@@ -16,11 +16,12 @@
 
 2. Clonar os repositórios (crie uma pasta e clone todos dentro dela):
    ```powershell
-   git clone https://github.com/FIAP-10NETT-Grupo-30/cloud-games-fase-4-orchestration-aws.git
-   git clone https://github.com/FIAP-10NETT-Grupo-30/cloud-games-fase-4-users.git
-   git clone https://github.com/FIAP-10NETT-Grupo-30/cloud-games-fase-4-catalog.git
-   git clone https://github.com/FIAP-10NETT-Grupo-30/cloud-games-fase-4-notifications.git
-   git clone https://github.com/FIAP-10NETT-Grupo-30/cloud-games-fase-4-payments.git
+   git clone https://github.com/louresb/cloud-games-fase-4-orchestration-aws.git
+   git clone https://github.com/louresb/cloud-games-fase-4-users.git
+   git clone https://github.com/louresb/cloud-games-fase-4-catalog.git
+   git clone https://github.com/louresb/cloud-games-fase-4-notifications.git
+   git clone https://github.com/louresb/cloud-games-fase-4-payments.git
+   git clone https://github.com/louresb/cloud-games-fase-4-audit.git
    ```
 
 3. Navegar até o diretório de orquestração:

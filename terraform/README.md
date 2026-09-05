@@ -11,7 +11,7 @@ Este diretorio contem a infraestrutura AWS da Fase 4.
 - DynamoDB para Audit.
 - AWS Secrets Manager para configuracoes sensiveis.
 - IAM/IRSA para acesso AWS por service account do Kubernetes.
-- SQS e ECS Notifications legado mantidos apenas por compatibilidade.
+- SQS e ECS opcionais para o runtime alternativo de Notifications.
 
 ## Uso
 
@@ -37,5 +37,5 @@ terraform plan
 - `dynamodb.tf`: tabela de Audit.
 - `secrets-manager.tf`: segredo compartilhado para External Secrets.
 - `iam-irsa.tf`: roles IAM por service account.
-- `ecs-notifications.tf`: legado opcional da fase anterior.
+- `ecs-notifications.tf`: runtime opcional de Notifications no ECS.
 - `outputs.tf`: endpoints e ARNs principais.

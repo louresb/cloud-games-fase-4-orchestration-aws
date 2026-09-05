@@ -6,7 +6,7 @@
 #   - dynamodb.tf       Audit events table
 #   - secrets-manager.tf  Secret values consumed by ExternalSecrets in K8s
 #   - iam-irsa.tf       IRSA roles per service (pod-level IAM)
-#   - ecs-notifications.tf  Legacy ECS Fargate task (Phase 3 carry-over; can be removed)
+#   - ecs-notifications.tf  Optional ECS Fargate runtime for Notifications
 
 locals {
   name_prefix = "${var.project_name}-${var.environment}"
@@ -37,7 +37,7 @@ data "aws_availability_zones" "available" {
 
 data "aws_caller_identity" "current" {}
 
-# Main async queue shared by payment and notification flow (Phase 3 carry-over).
+# Main async queue shared by the optional SQS payment-notification flow.
 resource "aws_sqs_queue" "payment_notification" {
   name = var.main_sqs_queue_name_prefix != "" ? "${var.main_sqs_queue_name_prefix}-${var.main_sqs_queue_name}" : var.main_sqs_queue_name
   tags = local.common_tags
