@@ -1,6 +1,6 @@
-# LEGACY (Phase 3 carry-over): the notifications worker on ECS Fargate.
-# Phase 4 prefers the EKS deployment of every service. Keeping this resource set in code
-# so existing demos still run, but it is NOT the target architecture - feel free to delete.
+# Optional notifications worker runtime on ECS Fargate.
+# The main topology deploys every service to EKS; this resource supports the
+# alternative SQS worker runtime when needed.
 
 resource "aws_cloudwatch_log_group" "notifications" {
   name              = "/ecs/${local.name_prefix}-${var.notifications_service_name}"
@@ -10,7 +10,7 @@ resource "aws_cloudwatch_log_group" "notifications" {
 
 resource "aws_security_group" "notifications_ecs" {
   name        = "${local.name_prefix}-${var.notifications_service_name}-ecs-sg"
-  description = "Security group for legacy notifications ECS tasks (Phase 3)"
+  description = "Security group for optional notifications ECS tasks"
   vpc_id      = data.aws_vpc.default.id
 
   egress {

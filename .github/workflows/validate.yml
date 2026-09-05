@@ -1,0 +1,47 @@
+name: Infrastructure Validation
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'fix/**', 'chore/**']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v4
+      - name: Format
+        run: terraform fmt -check -recursive
+      - name: Initialize
+        run: terraform init -backend=false
+      - name: Validate
+        run: terraform validate
+
+  compose:
+    name: Docker Compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate configuration
+        run: >
+          docker compose
+          --env-file .env.example
+          -f docker-compose.fase4.yaml
+          -f docker-compose.users.yaml
+          -f docker-compose.catalog.yaml
+          -f docker-compose.payments.yaml
+          -f docker-compose.notifications.yaml
+          config --quiet

@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
-$root = "C:\Users\bruno\dev"
-$orch = Join-Path $root "cloud-games-fase-4-orchestration-aws"
+$orch = Split-Path -Parent $PSScriptRoot
+$root = Split-Path -Parent $orch
 
 $SqlPassword = if ($env:SQL_PASSWORD) { $env:SQL_PASSWORD } else { "Your_password123" }
 $JwtSecret = if ($env:JWT_SECRET) { $env:JWT_SECRET } else { "dev-only-change-me-32-characters-min" }
